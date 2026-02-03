@@ -1,372 +1,472 @@
-import tkinter as tk
-from tkinter import messagebox
-import random
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valentine 💖</title>
+  <style>
+    :root {
+      --bg: #ffc0d9;
+      --panel: #ffe6f0;
+      --text: #3b2f2f;
+      --accent: #ff4d8d;
+      --accent-dark: #ff2f78;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app {
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+    }
+    @media (min-width: 768px) {
+      .app {
+        max-width: 520px;
+        padding: 24px;
+      }
+      .card {
+        padding: 28px 24px 24px;
+        border-radius: 28px;
+      }
+      .title {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+      }
+      .subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+      }
+      .field-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+      }
+      .input {
+        padding: 12px 16px;
+        font-size: 1.05rem;
+      }
+      button {
+        padding: 12px 24px;
+        font-size: 1.05rem;
+      }
+      .btn-yes, .btn-no {
+        min-width: 110px;
+      }
+      .gift-btn {
+        width: 72px;
+        height: 72px;
+        font-size: 1.9rem;
+        border-radius: 22px;
+      }
+      .reveal-text, .final-text {
+        font-size: 1rem;
+        margin-top: 10px;
+      }
+      .final-text {
+        margin-top: 14px;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 77, 141, 0.5);
+      }
+      .btn-primary:hover {
+        background: var(--accent-dark);
+      }
+      .btn-no:hover {
+        background: #ffbfd8;
+      }
+      .gift-btn:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+      }
+      .gift-btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+    }
+    .card {
+      background: var(--panel);
+      border-radius: 24px;
+      border: 2px solid #ff9fc2;
+      padding: 20px 18px 18px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .title {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin-bottom: 14px;
+    }
+    .field-label {
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+    .input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid #ff9fc2;
+      font-size: 0.95rem;
+      text-align: center;
+      outline: none;
+      background: #fff;
+    }
+    .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 77, 141, 0.2);
+    }
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(255, 77, 141, 0.4);
+    }
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 3px 7px rgba(255, 77, 141, 0.4);
+      background: var(--accent-dark);
+    }
+    .btn-yes {
+      min-width: 96px;
+    }
+    .btn-no {
+      min-width: 96px;
+      background: #ffd1e3;
+      color: var(--text);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-no-line {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .btn-no-line svg {
+      width: 100%;
+      height: 100%;
+    }
+    .btn-no-line line {
+      stroke: #cc0000;
+      stroke-width: 4;
+      stroke-linecap: round;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .btn-no-line.line-visible line {
+      opacity: 1;
+    }
+    .gifts-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 14px 0 6px;
+    }
+    .gift-btn {
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      border: none;
+      font-size: 1.6rem;
+      background: #ffd1e3;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gift-btn:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+    .reveal-text,
+    .final-text {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      white-space: pre-wrap;
+    }
+    .final-text {
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: #ff4d8d;
+      color: #fff;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 20;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translate(-50%, -4px);
+    }
+    .hearts-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      font-size: 1.4rem;
+      animation: floatUp 6s linear infinite;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    @keyframes floatUp {
+      0% {
+        transform: translateY(40px) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      25% {
+        transform: translateY(-20px) translateX(8px) rotate(5deg);
+      }
+      50% {
+        transform: translateY(-60px) translateX(-5px) rotate(-3deg);
+      }
+      75% {
+        transform: translateY(-90px) translateX(10px) rotate(4deg);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-150px) translateX(-8px) rotate(-2deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts-layer" id="hearts-layer"></div>
+  <div class="app">
+    <div class="card" id="start-card">
+      <div class="title">Valentine Setup 💖</div>
+      <div class="subtitle">Enter your name to personalize the question:</div>
+      <div class="field">
+        <div class="field-label">Your name</div>
+        <input id="name-input" class="input" type="text" placeholder="e.g. Ayesha" />
+      </div>
+      <div class="btn-row">
+        <button id="start-btn" class="btn-primary">Continue 💞</button>
+      </div>
+    </div>
 
+    <div class="card" id="main-card" style="display: none;">
+      <div class="title" id="question-text"></div>
+      <div class="subtitle">Choose one:</div>
+      <div class="btn-row">
+        <button id="yes-btn" class="btn-primary btn-yes">Yes</button>
+        <button id="no-btn" class="btn-no">
+          NO
+          <span class="btn-no-line" id="no-line">
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+              <line x1="8" y1="6" x2="92" y2="34"></line>
+              <line x1="92" y1="6" x2="8" y2="34"></line>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
 
-def main():
-    root = tk.Tk()
-    root.title("Valentine's Day")
-    root.geometry("520x320")
-    root.resizable(False, False)
+    <div class="card" id="yes-card" style="display: none;">
+      <div class="title" id="yes-title">CONGRATS! 🎉 you are my valentine!!! 💖</div>
+      <div class="subtitle" id="yes-sub"></div>
+      <div class="subtitle" style="margin-top: 10px;">Pick a mystery gift 🎁</div>
+      <div class="gifts-row">
+        <button class="gift-btn" data-gift="0">🎁</button>
+        <button class="gift-btn" data-gift="1">🎁</button>
+        <button class="gift-btn" data-gift="2">🎁</button>
+      </div>
+      <div class="reveal-text" id="reveal-text">
+        (Choose one box to reveal your surprise!)
+      </div>
+      <div class="final-text" id="final-text"></div>
+    </div>
+  </div>
 
-    # Soft Valentine styling
-    bg = "#ffc0d9"          # baby pink
-    panel = "#ffe6f0"       # very light pink panel
-    text = "#3b2f2f"
-    accent = "#ff4d8d"
-    danger = "#cc0000"
-    ui_font = ("Segoe UI", 18, "bold")
-    ui_font_small = ("Segoe UI", 12)
-    ui_btn_font = ("Segoe UI", 14, "bold")
+  <div id="toast" class="toast"></div>
 
-    root.configure(bg=bg)
+  <script>
+    const startCard = document.getElementById('start-card');
+    const mainCard = document.getElementById('main-card');
+    const yesCard = document.getElementById('yes-card');
+    const nameInput = document.getElementById('name-input');
+    const startBtn = document.getElementById('start-btn');
+    const questionText = document.getElementById('question-text');
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const noLine = document.getElementById('no-line');
+    const toast = document.getElementById('toast');
+    const heartsLayer = document.getElementById('hearts-layer');
+    const yesSub = document.getElementById('yes-sub');
+    const revealEl = document.getElementById('reveal-text');
+    const finalEl = document.getElementById('final-text');
 
-    def round_rect(canvas, x1, y1, x2, y2, r, **kwargs):
-        points = [
-            x1 + r, y1,
-            x2 - r, y1,
-            x2, y1,
-            x2, y1 + r,
-            x2, y2 - r,
-            x2, y2,
-            x2 - r, y2,
-            x1 + r, y2,
-            x1, y2,
-            x1, y2 - r,
-            x1, y1 + r,
-            x1, y1,
-        ]
-        return canvas.create_polygon(points, smooth=True, **kwargs)
+    let personName = '';
+    let giftOpened = false;
 
-    # ---- Personalized start screen ----
-    start_canvas = tk.Canvas(root, width=440, height=210, bg=bg, highlightthickness=0, bd=0)
-    start_canvas.pack(pady=35)
-    round_rect(start_canvas, 10, 10, 430, 200, 22, fill=panel, outline="#ff9fc2", width=2)
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 1800);
+    }
 
-    start_frame = tk.Frame(start_canvas, bg=panel)
-    start_canvas.create_window(220, 105, window=start_frame)
+    function switchCard(from, to) {
+      from.style.display = 'none';
+      to.style.display = 'block';
+    }
 
-    start_title = tk.Label(
-        start_frame,
-        text="Valentine Setup 💖",
-        font=("Segoe UI", 16, "bold"),
-        bg=panel,
-        fg=text,
-    )
-    start_title.pack(pady=(12, 6))
+    let heartsInterval = null;
+    const emojis = ["💖", "💕", "💗", "💓", "💝", "💞", "😚", "☺️", "🥰", "😍", "💋", "🌹", "✨", "⭐", "🎉"];
+    const colors = ["#ff4d8d", "#ff2f78", "#ff6ba3", "#ff9fc2", "#ffc0d9"];
 
-    start_sub = tk.Label(
-        start_frame,
-        text="Enter Your Name:",
-        font=("Times New Roman", 11),
-        bg=panel,
-        fg=text,
-    )
-    start_sub.pack(pady=(0, 10))
+    function createFloatingEmoji() {
+      const span = document.createElement('span');
+      span.className = 'heart';
+      span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const size = Math.random() * 8 + 18; // 18-26px
+      span.style.fontSize = size + 'px';
+      span.style.left = Math.random() * 100 + '%';
+      span.style.bottom = '-30px';
+      span.style.color = colors[Math.floor(Math.random() * colors.length)];
+      span.style.animationDelay = Math.random() * 2 + 's';
+      span.style.animationDuration = (Math.random() * 3 + 5) + 's'; // 5-8s
+      heartsLayer.appendChild(span);
+      
+      // Remove after animation completes
+      setTimeout(() => {
+        if (span.parentNode) {
+          span.parentNode.removeChild(span);
+        }
+      }, 10000);
+    }
 
-    name_var = tk.StringVar()
-    name_entry = tk.Entry(
-        start_frame,
-        textvariable=name_var,
-        font=("Segoe UI", 12),
-        width=24,
-        justify="center",
-        relief="solid",
-        bd=1,
-    )
-    name_entry.pack(pady=(0, 10))
-    name_entry.focus_set()
+    function startHearts() {
+      // Create initial batch
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => createFloatingEmoji(), i * 300);
+      }
+      
+      // Continuously create new ones
+      if (heartsInterval) clearInterval(heartsInterval);
+      heartsInterval = setInterval(() => {
+        createFloatingEmoji();
+      }, 800 + Math.random() * 1200); // Every 0.8-2 seconds
+    }
 
-    def build_main_ui(person_name: str):
-        # Clear the start UI
-        start_canvas.destroy()
+    function stopHearts() {
+      if (heartsInterval) {
+        clearInterval(heartsInterval);
+        heartsInterval = null;
+      }
+    }
 
-        person_name = (person_name or "").strip()
-        person_prefix = f"{person_name}, " if person_name else ""
+    const mysteryMessages = () => {
+      const prefix = personName ? personName + ', ' : '';
+      return [
+        prefix + 'Tuje pata nhi but tu mere liye bhaut special h.\nM jada express tho nhi kr pata but I love you 😚',
+        prefix + "M humesha tera sath dunga, jb bhi tuje meri zarurat hogi I'll be there for you 💖",
+        prefix + 'I love you 24/7/365 days a year ☺️',
+      ];
+    };
 
-        # Background animation canvas for floating hearts/emojis (create first, behind everything)
-        bg_anim = tk.Canvas(root, width=520, height=320, bg=bg, highlightthickness=0, bd=0)
-        bg_anim.place(x=0, y=0)
+    function handleStart() {
+      personName = (nameInput.value || '').trim();
+      const prefix = personName ? personName + ', ' : '';
+      questionText.textContent = prefix + 'will you be my Valentine 😚';
+      yesSub.textContent = personName ? `Hi ${personName} 💕` : '';
+      switchCard(startCard, mainCard);
+      // Start floating hearts/emojis when main question appears
+      startHearts();
+    }
 
-        # Floating hearts and emojis
-        floating_items = []
-        emojis = ["💖", "💕", "💗", "💓", "💝", "💞", "😚", "☺️", "🥰", "😍", "💋", "🌹", "✨", "⭐"]
-        
-        def create_floating_item():
-            x = random.randint(20, 500)
-            y = random.randint(300, 350)
-            emoji = random.choice(emojis)
-            size = random.randint(16, 24)
-            item = bg_anim.create_text(x, y, text=emoji, font=("Segoe UI", size), fill=random.choice(["#ff4d8d", "#ff2f78", "#ff6ba3", "#ff9fc2"]))
-            floating_items.append({"id": item, "x": x, "y": y, "speed": random.uniform(0.5, 1.5), "drift": random.uniform(-0.5, 0.5)})
-            # Schedule next item creation
-            root.after(random.randint(800, 2000), create_floating_item)
+    startBtn.addEventListener('click', handleStart);
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleStart();
+      }
+    });
 
-        def animate_floating():
-            for item_data in floating_items[:]:
-                item_id = item_data["id"]
-                try:
-                    # Move upward
-                    item_data["y"] -= item_data["speed"]
-                    # Add slight horizontal drift
-                    item_data["x"] += item_data["drift"]
-                    bg_anim.coords(item_id, item_data["x"], item_data["y"])
-                    
-                    # Remove if off screen
-                    if item_data["y"] < -30:
-                        bg_anim.delete(item_id)
-                        floating_items.remove(item_data)
-                except:
-                    if item_data in floating_items:
-                        floating_items.remove(item_data)
-            
-            root.after(30, animate_floating)
+    yesBtn.addEventListener('click', () => {
+      giftOpened = false;
+      revealEl.textContent = '(Choose one box to reveal your surprise!)';
+      finalEl.textContent = '';
+      document.querySelectorAll('.gift-btn').forEach((btn) => {
+        btn.disabled = false;
+      });
+      switchCard(mainCard, yesCard);
+      // Hearts should already be running from main card, but ensure they continue
+      if (!heartsInterval) {
+        startHearts();
+      }
+    });
 
-        # Start creating floating items
-        for _ in range(8):
-            root.after(random.randint(0, 2000), create_floating_item)
-        animate_floating()
+    noBtn.addEventListener('click', () => {
+      noLine.classList.add('line-visible');
+      showToast("Ouch! it's hurt 💔 try again ☺️.");
+    });
 
-        title = tk.Label(
-            root,
-            text=f"{person_prefix}will you be my Valentine 😚",
-            font=ui_font,
-            pady=30,
-            bg=bg,
-            fg=text,
-        )
-        title.pack()
+    document.querySelectorAll('.gift-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (giftOpened) return;
+        giftOpened = true;
+        const idx = parseInt(btn.getAttribute('data-gift'), 10);
+        const msgs = mysteryMessages();
+        revealEl.textContent = 'Surprise: ' + msgs[idx];
+        finalEl.textContent = 'See you soon... ' + (personName || 'Valentine') + ' 😚☺️';
+        document.querySelectorAll('.gift-btn').forEach((b) => (b.disabled = true));
+      });
+    });
+  </script>
+</body>
+</html>
 
-        subtitle = tk.Label(
-            root,
-            text="Choose one:",
-            font=ui_font_small,
-            bg=bg,
-            fg=text,
-        )
-        subtitle.pack()
-
-        # Rounded-corner panel behind the buttons (tkinter doesn't support rounded Frames)
-        panel_canvas = tk.Canvas(root, width=420, height=120, bg=bg, highlightthickness=0, bd=0)
-        panel_canvas.pack(pady=25)
-        round_rect(panel_canvas, 10, 10, 410, 110, 22, fill=panel, outline="#ff9fc2", width=2)
-
-        buttons_frame = tk.Frame(panel_canvas, bg=panel)
-        panel_canvas.create_window(210, 60, window=buttons_frame)
-
-        no_cross_visible = {"value": False}  # cross appears only after NO is pressed
-
-        def on_yes():
-            win = tk.Toplevel(root)
-            win.title("Congrats!")
-            win.geometry("520x320")
-            win.resizable(False, False)
-            win.configure(bg=bg)
-
-            # Background animation canvas (create first so everything else appears above it)
-            anim = tk.Canvas(win, width=520, height=320, bg=bg, highlightthickness=0)
-            anim.place(x=0, y=0)
-
-            header = tk.Label(
-                win,
-                text=f"CONGRATS! 🎉 you are my valentine!!! 💖",
-                font=("Segoe UI", 16, "bold"),
-                bg=bg,
-                fg=text,
-                pady=10,
-            )
-            header.pack()
-
-            # Rounded panel helper for the "Yes" window
-            def make_rounded_panel(parent, w, h, fill, outline):
-                c = tk.Canvas(parent, width=w, height=h, bg=bg, highlightthickness=0, bd=0)
-                c.pack(pady=10)
-                round_rect(c, 10, 10, w - 10, h - 10, 22, fill=fill, outline=outline, width=2)
-                inner = tk.Frame(c, bg=fill)
-                c.create_window(w // 2, h // 2, window=inner)
-                return inner
-
-            step_panel = make_rounded_panel(win, 480, 220, panel, "#ff9fc2")
-
-            step_title = tk.Label(
-                step_panel,
-                text="Pick a mystery gift 🎁",
-                font=("Segoe UI", 13, "bold"),
-                bg=panel,
-                fg=text,
-            )
-            step_title.pack(pady=(12, 6))
-
-            gifts_row = tk.Frame(step_panel, bg=panel)
-            gifts_row.pack(pady=6)
-
-            reveal_text = tk.StringVar(value="(Choose one box to reveal your surprise!)")
-            reveal_label = tk.Label(
-                step_panel,
-                textvariable=reveal_text,
-                font=("Segoe UI", 11),
-                bg=panel,
-                fg=text,
-                wraplength=430,
-                justify="center",
-            )
-            reveal_label.pack(pady=(6, 10))
-
-            final_text = tk.StringVar(value="")
-            final_label = tk.Label(
-                step_panel,
-                textvariable=final_text,
-                font=("Segoe UI", 11),
-                bg=panel,
-                fg=text,
-                wraplength=430,
-                justify="center",
-            )
-
-            hearts = []
-            confetti = []
-            for _ in range(12):
-                x = random.randint(20, 500)
-                y = random.randint(160, 310)
-                hearts.append(anim.create_text(x, y, text="💖", font=("Segoe UI", 18)))
-            for _ in range(14):
-                x = random.randint(10, 510)
-                y = random.randint(10, 310)
-                confetti.append(anim.create_text(x, y, text="🎉", font=("Segoe UI", 16)))
-
-            def tick():
-                for h in hearts:
-                    anim.move(h, 0, -2)
-                    _x, y = anim.coords(h)
-                    if y < -10:
-                        anim.coords(h, random.randint(20, 500), random.randint(260, 330))
-                for c in confetti:
-                    anim.move(c, random.randint(-2, 2), 2)
-                    _x, y = anim.coords(c)
-                    if y > 340:
-                        anim.coords(c, random.randint(10, 510), random.randint(-30, 0))
-                win.after(55, tick)
-
-            tick()
-
-            gift_messages = [
-                f"{person_prefix}Tuje pata nhi but tu mere liye bhaut special h.\nM jada express tho nhi kr pata but I love you 😚",
-                f"{person_prefix}M humesha tera sath dunga, jb bhi tuje meri zarurat hogi I'll be there for you 💖",
-                f"{person_prefix}I love you 24/7/365 days a year☺️",
-            ]
-
-            gift_opened = {"value": False}
-
-            def after_gift_opened():
-                # Finish flow after gift is revealed (no date-idea step)
-                final_label.pack(pady=(8, 12))
-
-            def reveal_gift(idx):
-                if gift_opened["value"]:
-                    return
-                gift_opened["value"] = True
-                reveal_text.set(f"Surprise: {gift_messages[idx]}")
-                final_text.set(f"See you soon... {person_name or 'Valentine'} 😚☺️")
-                for b in gift_buttons:
-                    b.configure(state="disabled")
-                after_gift_opened()
-
-            gift_buttons = []
-            for i in range(3):
-                btn = tk.Button(
-                    gifts_row,
-                    text="🎁",
-                    font=("Segoe UI", 22),
-                    width=3,
-                    command=lambda i=i: reveal_gift(i),
-                    bg="#ffd1e3",
-                    fg=text,
-                    activebackground="#ffbfd8",
-                    activeforeground=text,
-                    relief="raised",
-                    bd=4,
-                )
-                btn.grid(row=0, column=i, padx=12)
-                gift_buttons.append(btn)
-
-        def on_no():
-            # Show a red cross only AFTER the NO button is pressed
-            if not no_cross_visible["value"]:
-                no_canvas.itemconfigure(cross1, state="normal")
-                no_canvas.itemconfigure(cross2, state="normal")
-                no_cross_visible["value"] = True
-            messagebox.showerror("Ouch!", "Ouch! it's hurt 💔 try again ☺️.")
-
-        yes_btn = tk.Button(
-            buttons_frame,
-            text="Yes",
-            font=ui_btn_font,
-            width=10,
-            command=on_yes,
-            bg=accent,
-            fg="white",
-            activebackground="#ff2f78",
-            activeforeground="white",
-            relief="raised",
-            bd=4,
-        )
-        yes_btn.grid(row=0, column=0, padx=18)
-
-        # NO button: cross appears only when pressed
-        no_canvas = tk.Canvas(
-            buttons_frame,
-            width=160,
-            height=44,
-            highlightthickness=0,
-            bd=0,
-            bg=panel,
-        )
-        no_canvas.grid(row=0, column=1, padx=18)
-
-        no_btn = tk.Button(
-            buttons_frame,
-            text="NO",
-            font=ui_btn_font,
-            width=10,
-            command=on_no,
-            bg="#ffd1e3",
-            fg=text,
-            activebackground="#ffbfd8",
-            activeforeground=text,
-            relief="raised",
-            bd=4,
-        )
-
-        # Put the button inside the canvas, then prepare a red "X" (hidden until pressed)
-        no_canvas.create_window(0, 0, anchor="nw", window=no_btn, width=160, height=44)
-        cross1 = no_canvas.create_line(6, 6, 154, 38, fill=danger, width=4, state="hidden")
-        cross2 = no_canvas.create_line(154, 6, 6, 38, fill=danger, width=4, state="hidden")
-        
-        # Ensure background animation canvas stays behind all widgets
-        root.update_idletasks()  # Update to ensure all widgets are rendered
-        bg_anim.lower()
-
-    def start():
-        build_main_ui(name_var.get())
-
-    start_btn = tk.Button(
-        start_frame,
-        text="Continue 💞",
-        font=("Segoe UI", 12, "bold"),
-        width=16,
-        command=start,
-        bg=accent,
-        fg="white",
-        activebackground="#ff2f78",
-        activeforeground="white",
-        relief="raised",
-        bd=4,
-    )
-    start_btn.pack(pady=(2, 14))
-    name_entry.bind("<Return>", lambda _e: start())
-
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    main()
